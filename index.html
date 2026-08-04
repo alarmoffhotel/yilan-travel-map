@@ -45,12 +45,36 @@ document.addEventListener('DOMContentLoaded',function(){var el=document.getEleme
   --danger:#B23A2E;
   --shadow-sm:0 2px 8px rgba(43,42,37,.07);
   --shadow-md:0 8px 24px rgba(43,42,37,.14);
-  /* 可在後台自訂的外觀色彩，標題／選取分類／Google地圖按鈕預設改成黑色 */
+  /* 可在後台自訂的外觀色彩，分散設定在各對應區塊（網站標題設定／分類管理／標籤管理／現有景點列表／後台按鈕顏色） */
   --theme-title-color:#1A1A1A;
   --theme-subtitle-color:#6B6858;
-  --theme-accent-color:#1A1A1A;
+  --theme-text-color:#2B2A25;
+  --theme-muted-text-color:#6B6858;
+  --theme-border-color:#E3DBC6;
   --theme-bg-color:#FAF6EE;
-  --theme-card-bg-color:#FFFDF8;
+  --theme-header-bg-color:#FAF6EE;
+  --theme-tagbar-bg-color:#F1EBDC;
+  --theme-sidebar-bg-color:#FAF6EE;
+  --theme-admin-section-bg-color:#FFFDF8;
+  /* 分類篩選按鈕 */
+  --theme-cat-bg:#FFFDF8; --theme-cat-text:#6B6858; --theme-cat-border:#E3DBC6;
+  --theme-cat-hover-bg:#FFFDF8; --theme-cat-hover-border:#6B8E5A;
+  --theme-cat-active-bg:#1A1A1A; --theme-cat-active-border:#1A1A1A;
+  /* 標籤篩選按鈕 */
+  --theme-tag-bg:#FFFDF8; --theme-tag-text:#6B6858; --theme-tag-border:#E3DBC6;
+  --theme-tag-hover-bg:#FFFDF8; --theme-tag-hover-border:#6B8E5A;
+  --theme-tag-active-bg:#1A1A1A; --theme-tag-active-border:#1A1A1A;
+  /* 景點卡片 */
+  --theme-card-bg-color:#FFFDF8; --theme-card-title-color:#2B2A25; --theme-card-desc-color:#6B6858;
+  --theme-card-border:#E3DBC6; --theme-card-hover-border:#3E5238;
+  --theme-card-selected-bg:#F1EBDC; --theme-card-selected-border:#3E5238;
+  --theme-rec-bg-start:#FBF2DA; --theme-rec-bg-end:#FFFDF8;
+  --theme-rec-border:#E3C578; --theme-rec-selected-border:#C9A227;
+  --theme-navbtn-color:#1A1A1A;
+  /* 後台按鈕 */
+  --theme-btn-primary:#1A1A1A;
+  --theme-btn-secondary:#6B6858;
+  --theme-btn-danger:#B23A2E;
   --radius-lg:18px;
   --radius-md:12px;
   --font-display:'Noto Serif TC', serif;
@@ -60,7 +84,7 @@ document.addEventListener('DOMContentLoaded',function(){var el=document.getEleme
 
 *{box-sizing:border-box;}
 html,body{margin:0;padding:0;height:100%;}
-body{font-family:var(--font-body);color:var(--ink);background:var(--theme-bg-color);overflow:hidden;}
+body{font-family:var(--font-body);color:var(--theme-text-color);background:var(--theme-bg-color);overflow:hidden;}
 button{font-family:inherit;cursor:pointer;}
 input,select,textarea{font-family:inherit;}
 a{color:inherit;}
@@ -77,7 +101,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 
 .topbar{
   display:flex;align-items:center;gap:20px;padding:16px 24px;
-  background:var(--paper);border-bottom:1px solid var(--line);
+  background:var(--theme-header-bg-color);border-bottom:1px solid var(--theme-border-color);
   flex-wrap:wrap;z-index:10;
 }
 .brand{display:flex;flex-direction:column;gap:2px;min-width:190px;}
@@ -86,13 +110,13 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 
 .filters{display:flex;gap:8px;flex-wrap:wrap;flex:1;}
 .filter-btn{
-  border:1px solid var(--line);background:var(--paper-card);color:var(--ink-soft);
+  border:1px solid var(--theme-cat-border);background:var(--theme-cat-bg);color:var(--theme-cat-text);
   padding:8px 16px;border-radius:999px;font-size:13.5px;font-weight:500;
   transition:all .15s ease;display:flex;align-items:center;gap:6px;
 }
-.filter-btn .dot{width:8px;height:8px;border-radius:50%;background:var(--ink-soft);}
-.filter-btn:hover{border-color:var(--sage);color:var(--ink);}
-.filter-btn.active{background:var(--theme-accent-color);border-color:var(--theme-accent-color);color:#fff;}
+.filter-btn .dot{width:8px;height:8px;border-radius:50%;background:var(--theme-cat-text);}
+.filter-btn:hover{border-color:var(--theme-cat-hover-border);background:var(--theme-cat-hover-bg);}
+.filter-btn.active{background:var(--theme-cat-active-bg);border-color:var(--theme-cat-active-border);color:#fff;}
 .filter-btn.active .dot{background:#fff;}
 .recommend-switch-plain{
   display:flex;align-items:center;justify-content:flex-end;gap:9px;cursor:pointer;
@@ -114,19 +138,19 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 
 .tag-filter-bar{
   display:flex;flex-wrap:wrap;align-items:center;gap:8px;
-  padding:10px 24px;background:var(--paper-alt);border-bottom:1px solid var(--line);
+  padding:10px 24px;background:var(--theme-tagbar-bg-color);border-bottom:1px solid var(--theme-border-color);
 }
 .tag-filter-bar:empty{display:none;padding:0;border-bottom:none;}
-.tag-filter-label{font-size:12px;color:var(--ink-soft);font-weight:700;flex-shrink:0;}
-.tag-filter-btn{font-size:12px;padding:6px 13px;border-radius:999px;border:1px solid var(--line);background:var(--paper-card);color:var(--ink-soft);font-weight:600;}
-.tag-filter-btn:hover{border-color:var(--sage);color:var(--ink);}
-.tag-filter-btn.active{background:var(--sage-deep);border-color:var(--sage-deep);color:#fff;}
+.tag-filter-label{font-size:12px;color:var(--theme-muted-text-color);font-weight:700;flex-shrink:0;}
+.tag-filter-btn{font-size:12px;padding:6px 13px;border-radius:999px;border:1px solid var(--theme-tag-border);background:var(--theme-tag-bg);color:var(--theme-tag-text);font-weight:600;}
+.tag-filter-btn:hover{border-color:var(--theme-tag-hover-border);background:var(--theme-tag-hover-bg);}
+.tag-filter-btn.active{background:var(--theme-tag-active-bg);border-color:var(--theme-tag-active-border);color:#fff;}
 
 .mobile-cat-menu-btn{display:none;}
 .mobile-cat-menu{display:none;}
 
 .main-layout{flex:1;display:flex;min-height:0;}
-#listPane{width:380px;min-width:380px;overflow-y:auto;padding:18px;background:var(--paper);border-right:1px solid var(--line);}
+#listPane{width:380px;min-width:380px;overflow-y:auto;padding:18px;background:var(--theme-sidebar-bg-color);border-right:1px solid var(--theme-border-color);}
 #listPane::-webkit-scrollbar{width:8px;}
 #listPane::-webkit-scrollbar-thumb{background:var(--line);border-radius:4px;}
 #mapPane{flex:1;position:relative;}
@@ -140,7 +164,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 
 /* --- 景點卡片（簽名元素：washi 紙膠帶轉角，顏色取自分類色；特別推薦時整體改為金色調） --- */
 .spot-card{
-  position:relative;background:var(--theme-card-bg-color);border:1px solid var(--line);
+  position:relative;background:var(--theme-card-bg-color);border:1px solid var(--theme-card-border);
   border-radius:var(--radius-md);padding:16px 16px 14px 18px;margin-bottom:14px;margin-top:8px;
   cursor:pointer;transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease, background .15s ease;
 }
@@ -149,17 +173,17 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
   transform:rotate(-4deg);box-shadow:0 1px 3px rgba(0,0,0,.18);opacity:.85;
   background:var(--tape-color, var(--sage));
 }
-.spot-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-sm);}
-.spot-card.selected{border-color:var(--sage-deep);background:var(--paper-alt);}
+.spot-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-sm);border-color:var(--theme-card-hover-border);}
+.spot-card.selected{border-color:var(--theme-card-selected-border);background:var(--theme-card-selected-bg);}
 
-/* 特別推薦：整張卡片改成暖金色調，跟一般景點一眼區分開來 */
+/* 特別推薦：整張卡片改成漸層色調，跟一般景點一眼區分開來 */
 .spot-card.is-recommended{
-  background:linear-gradient(180deg, #FBF2DA 0%, var(--paper-card) 65%);
-  border-color:#E3C578;
+  background:linear-gradient(180deg, var(--theme-rec-bg-start) 0%, var(--theme-rec-bg-end) 65%);
+  border-color:var(--theme-rec-border);
 }
 .spot-card.is-recommended::before{opacity:1;box-shadow:0 2px 5px rgba(201,162,39,.35);}
-.spot-card.is-recommended:hover{box-shadow:0 6px 16px rgba(201,162,39,.22);}
-.spot-card.is-recommended.selected{border-color:var(--gold);background:linear-gradient(180deg, #F7E9C4 0%, var(--paper-alt) 65%);}
+.spot-card.is-recommended:hover{box-shadow:0 6px 16px rgba(201,162,39,.22);border-color:var(--theme-rec-selected-border);}
+.spot-card.is-recommended.selected{border-color:var(--theme-rec-selected-border);background:linear-gradient(180deg, var(--theme-rec-bg-start) 0%, var(--theme-rec-bg-end) 65%);}
 
 .tag-row-inline{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;}
 .tag-row-inline .cat-tag{margin-bottom:0;}
@@ -170,28 +194,28 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .recommend-inline-badge i{color:var(--gold);}
 
 .tag-chip-row{display:flex;flex-wrap:wrap;gap:5px;margin:0 0 10px 0;}
-.tag-chip{font-size:10.5px;padding:2px 9px;border-radius:999px;background:var(--paper-alt);color:var(--ink-soft);border:1px solid var(--line);cursor:pointer;transition:background .12s ease, color .12s ease;}
-.tag-chip:hover{background:var(--sage-deep);color:#fff;border-color:var(--sage-deep);}
+.tag-chip{font-size:10.5px;padding:2px 9px;border-radius:999px;background:var(--theme-tag-bg);color:var(--theme-tag-text);border:1px solid var(--theme-tag-border);cursor:pointer;transition:background .12s ease, color .12s ease, border-color .12s ease;}
+.tag-chip:hover{background:var(--theme-tag-hover-bg);border-color:var(--theme-tag-hover-border);}
 
 .tag-picker{display:flex;flex-wrap:wrap;gap:8px;}
 .tag-toggle-btn{font-size:12.5px;padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:var(--paper-card);color:var(--ink-soft);font-weight:600;}
 .tag-toggle-btn.active{background:var(--sage-deep);border-color:var(--sage-deep);color:#fff;}
 
 .spot-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;}
-.spot-card-title{font-family:var(--font-display);font-weight:700;font-size:17px;margin:0 0 4px 0;color:var(--ink);}
+.spot-card-title{font-family:var(--font-display);font-weight:700;font-size:17px;margin:0 0 4px 0;color:var(--theme-card-title-color);}
 .spot-icon-badge{
   width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;
   color:#fff;font-size:13px;flex-shrink:0;box-shadow:var(--shadow-sm);
 }
 .cat-tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 9px;border-radius:999px;margin-bottom:8px;letter-spacing:.5px;}
 
-.spot-desc{font-size:13.5px;line-height:1.6;color:var(--ink-soft);margin:0 0 10px 0;}
+.spot-desc{font-size:13.5px;line-height:1.6;color:var(--theme-card-desc-color);margin:0 0 10px 0;}
 .spot-photo-img{width:100%;object-fit:cover;border-radius:10px;margin-bottom:10px;display:block;background:var(--paper-alt);}
-.spot-meta{display:flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:12px;color:var(--ink-soft);margin-bottom:10px;}
+.spot-meta{display:flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:12px;color:var(--theme-muted-text-color);margin-bottom:10px;}
 .spot-meta i{color:var(--gold);}
 
 .nav-btn{
-  display:inline-flex;align-items:center;gap:6px;background:var(--theme-accent-color);color:#fff;border:none;
+  display:inline-flex;align-items:center;gap:6px;background:var(--theme-navbtn-color);color:#fff;border:none;
   padding:8px 14px;border-radius:999px;font-size:12.5px;font-weight:700;text-decoration:none;transition:opacity .15s ease;
 }
 .nav-btn:hover{opacity:.85;}
@@ -199,7 +223,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .empty-hint{text-align:center;color:var(--ink-soft);padding:60px 20px;font-size:13.5px;line-height:1.8;}
 #mobileToggle{display:none;}
 
-.leaflet-popup-content-wrapper{border-radius:var(--radius-md);box-shadow:var(--shadow-md);padding:0;}
+.leaflet-popup-content-wrapper{border-radius:var(--radius-md);box-shadow:var(--shadow-md);padding:0;background:var(--theme-card-bg-color);}
 .leaflet-popup-content{margin:0;width:260px !important;}
 .popup-card{padding:16px;}
 .popup-card .spot-card-title{font-size:16px;}
@@ -254,24 +278,31 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .cat-admin-row.drag-over,.admin-list-row.drag-over{outline:2px dashed var(--sage-deep);outline-offset:-2px;border-radius:8px;}
 
 /* ======================= 後台管理面板（滿版燈箱） ======================= */
-#adminOverlay{position:fixed;inset:0;background:var(--paper);z-index:2000;display:none;flex-direction:column;overflow-y:auto;}
+#adminOverlay{position:fixed;inset:0;background:var(--theme-bg-color);z-index:2000;display:none;flex-direction:column;overflow-y:auto;}
 #adminOverlay.open{display:flex;}
 
 .admin-topbar{
   display:flex;align-items:center;justify-content:space-between;padding:18px 28px;
-  border-bottom:1px solid var(--line);background:var(--paper);position:sticky;top:0;z-index:10;flex-wrap:wrap;gap:10px;
+  border-bottom:1px solid var(--theme-border-color);background:var(--theme-bg-color);position:sticky;top:0;z-index:10;flex-wrap:wrap;gap:10px;
 }
-.admin-topbar h2{font-family:var(--font-display);font-size:20px;margin:0;color:var(--sage-deep);display:flex;align-items:center;gap:10px;}
+.admin-topbar h2{font-family:var(--font-display);font-size:20px;margin:0;color:var(--theme-title-color);display:flex;align-items:center;gap:10px;}
 .admin-topbar-actions{display:flex;gap:8px;flex-wrap:wrap;}
 .topbar-btn{
-  background:var(--paper-card);border:1px solid var(--line);padding:9px 16px;border-radius:999px;
-  font-size:13px;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:6px;
+  background:var(--theme-card-bg-color);border:1px solid var(--theme-btn-secondary);padding:9px 16px;border-radius:999px;
+  font-size:13px;font-weight:700;color:var(--theme-btn-secondary);display:flex;align-items:center;gap:6px;
 }
-.topbar-btn:hover{border-color:var(--sage);}
-.topbar-btn.logout:hover{border-color:var(--danger);color:var(--danger);}
+.topbar-btn:hover{opacity:.75;}
+.topbar-btn.logout{border-color:var(--theme-btn-danger);color:var(--theme-btn-danger);}
+.topbar-btn.logout:hover{opacity:.75;}
 
 .admin-body{flex:1;display:grid;grid-template-columns:1fr 1.3fr;gap:24px;padding:24px 28px 60px;max-width:1300px;width:100%;margin:0 auto;}
-.admin-section{background:var(--paper-card);border:1px solid var(--line);border-radius:var(--radius-lg);padding:20px;}
+.admin-section{background:var(--theme-admin-section-bg-color);border:1px solid var(--theme-border-color);border-radius:var(--radius-lg);padding:20px;}
+.theme-group-title{font-size:12px;font-weight:700;color:var(--ink-soft);letter-spacing:.3px;margin:18px 0 6px;padding-top:10px;border-top:1px solid var(--line);}
+.theme-group-title:first-of-type{margin-top:12px;padding-top:0;border-top:none;}
+.theme-color-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:9px 2px;}
+.theme-color-label{font-size:13.5px;font-weight:600;color:var(--ink);display:flex;flex-direction:column;gap:2px;}
+.theme-color-sub{font-size:11px;font-weight:400;color:var(--ink-soft);}
+.theme-color-swatch{width:36px;height:36px;padding:2px;border:1px solid var(--line);border-radius:8px;cursor:pointer;flex-shrink:0;background:var(--paper);}
 .admin-section h3{font-family:var(--font-display);font-size:16px;margin:0 0 14px 0;display:flex;align-items:center;justify-content:space-between;color:var(--ink);}
 .admin-section h3 .sub{font-family:var(--font-body);font-size:11.5px;color:var(--ink-soft);font-weight:400;}
 
@@ -279,7 +310,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .admin-list-row:last-child{border-bottom:none;}
 .admin-list-row .name{flex:1;min-width:0;}
 .admin-list-row .name b{display:block;font-size:14px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.icon-btn{width:30px;height:30px;border-radius:8px;border:1px solid var(--line);background:var(--paper);display:flex;align-items:center;justify-content:center;color:var(--ink-soft);font-size:12px;flex-shrink:0;}
+.icon-btn{width:30px;height:30px;border-radius:8px;border:1px solid var(--theme-border-color);background:var(--theme-bg-color);display:flex;align-items:center;justify-content:center;color:var(--ink-soft);font-size:12px;flex-shrink:0;}
 .icon-btn:hover{background:var(--paper-alt);color:var(--ink);}
 .icon-btn.danger:hover{background:var(--danger-bg);color:var(--danger);border-color:#E3B8B0;}
 
@@ -402,9 +433,9 @@ textarea{resize:vertical;min-height:70px;line-height:1.6;}
 #listScroll .spot-icon-badge .icon-glyph-unicode{filter:grayscale(1) brightness(0) invert(1);}
 
 .form-actions{display:flex;gap:10px;margin-top:6px;}
-.save-btn{flex:1;padding:13px;border:none;border-radius:999px;background:var(--sage-deep);color:#fff;font-weight:700;font-size:14.5px;display:flex;align-items:center;justify-content:center;gap:8px;}
+.save-btn{flex:1;padding:13px;border:none;border-radius:999px;background:var(--theme-btn-primary);color:#fff;font-weight:700;font-size:14.5px;display:flex;align-items:center;justify-content:center;gap:8px;}
 .save-btn:hover{background:var(--river);}
-.cancel-btn{padding:13px 18px;border:1px solid var(--line);border-radius:999px;background:var(--paper);color:var(--ink-soft);font-weight:700;font-size:13.5px;}
+.cancel-btn{padding:13px 18px;border:1px solid var(--theme-btn-secondary);border-radius:999px;background:var(--theme-bg-color);color:var(--theme-btn-secondary);font-weight:700;font-size:13.5px;}
 .cancel-btn:hover{border-color:var(--ink-soft);color:var(--ink);}
 
 .account-divider{border:none;border-top:1px dashed var(--line);margin:16px 0;}
@@ -429,12 +460,12 @@ textarea{resize:vertical;min-height:70px;line-height:1.6;}
     display:flex;align-items:center;justify-content:center;
     position:absolute;top:12px;right:16px;width:38px;height:38px;
     border-radius:9px;border:1px solid var(--line);background:var(--paper-card);
-    color:var(--sage-deep);font-size:16px;z-index:20;
+    color:var(--sage-deep);font-size:16px;z-index:2000;
   }
   .mobile-cat-menu{
     display:none;position:absolute;top:58px;right:16px;left:16px;
     background:var(--paper-card);border:1px solid var(--line);border-radius:12px;
-    box-shadow:var(--shadow-md);z-index:30;padding:8px;max-height:60vh;overflow-y:auto;
+    box-shadow:var(--shadow-md);z-index:2000;padding:8px;max-height:60vh;overflow-y:auto;
   }
   .mobile-cat-menu.open{display:block;}
   .mobile-cat-menu-item{
@@ -578,38 +609,27 @@ textarea{resize:vertical;min-height:70px;line-height:1.6;}
             <button type="submit" class="save-btn" style="flex:none;padding:10px 20px;font-size:13px;"><i class="fa-solid fa-floppy-disk"></i> 儲存標題</button>
           </div>
         </form>
-      </div>
-
-      <div class="admin-section" style="margin-top:20px;">
-        <h3>外觀顏色設定</h3>
-        <p class="backup-hint" style="margin-bottom:10px;">改任何一個顏色，前台會立即套用，也會自動存檔同步。</p>
-        <div class="form-row two-col">
-          <div>
-            <label for="f_theme_title">標題顏色</label>
-            <input type="color" id="f_theme_title" onchange="onThemeColorChange('titleColor', this.value)" style="width:100%;height:41px;padding:2px;border:1px solid var(--line);border-radius:8px;background:var(--paper);" />
+        <details class="advanced-coords" style="margin-top:14px;">
+          <summary>標題顏色設定</summary>
+          <p class="backup-hint" style="margin:8px 0;">會同步套用到前台標題，跟後台頂部「景點後台管理」標題與圖示。</p>
+          <div class="theme-color-row">
+            <div class="theme-color-label">標題顏色</div>
+            <input type="color" class="theme-color-swatch" id="f_theme_title" onchange="onThemeColorChange('titleColor', this.value)" />
           </div>
-          <div>
-            <label for="f_theme_subtitle">副標題顏色</label>
-            <input type="color" id="f_theme_subtitle" onchange="onThemeColorChange('subtitleColor', this.value)" style="width:100%;height:41px;padding:2px;border:1px solid var(--line);border-radius:8px;background:var(--paper);" />
+          <div class="theme-color-row">
+            <div class="theme-color-label">副標題顏色</div>
+            <input type="color" class="theme-color-swatch" id="f_theme_subtitle" onchange="onThemeColorChange('subtitleColor', this.value)" />
           </div>
-        </div>
-        <div class="form-row two-col">
-          <div>
-            <label for="f_theme_accent">按鈕／強調色 <span class="hint">（選取中的分類、Google 地圖按鈕）</span></label>
-            <input type="color" id="f_theme_accent" onchange="onThemeColorChange('accentColor', this.value)" style="width:100%;height:41px;padding:2px;border:1px solid var(--line);border-radius:8px;background:var(--paper);" />
+        </details>
+        <details class="advanced-coords" style="margin-top:10px;">
+          <summary>常用配色組合</summary>
+          <p class="backup-hint" style="margin:8px 0;">把目前「全部」顏色設定存成一組，之後可以一鍵切換不同配色。</p>
+          <div id="themePresetList"></div>
+          <div class="form-actions" style="margin-top:8px;">
+            <input type="text" id="f_theme_preset_name" placeholder="幫這組配色取個名字，例如：夏日海洋" style="flex:1;" />
+            <button type="button" class="topbar-btn" onclick="saveCurrentThemeAsPreset()"><i class="fa-solid fa-plus"></i> 儲存目前配色</button>
           </div>
-          <div>
-            <label for="f_theme_bg">頁面背景顏色</label>
-            <input type="color" id="f_theme_bg" onchange="onThemeColorChange('bgColor', this.value)" style="width:100%;height:41px;padding:2px;border:1px solid var(--line);border-radius:8px;background:var(--paper);" />
-          </div>
-        </div>
-        <div class="form-row">
-          <label for="f_theme_card_bg">卡片背景顏色</label>
-          <input type="color" id="f_theme_card_bg" onchange="onThemeColorChange('cardBgColor', this.value)" style="width:100%;height:41px;padding:2px;border:1px solid var(--line);border-radius:8px;background:var(--paper);" />
-        </div>
-        <div class="form-actions">
-          <button type="button" class="cancel-btn" onclick="resetTheme()">重設為預設顏色</button>
-        </div>
+        </details>
       </div>
 
       <div class="admin-section" style="margin-top:20px;">
@@ -635,6 +655,20 @@ textarea{resize:vertical;min-height:70px;line-height:1.6;}
           </div>
         </form>
         <div class="cat-editing-hint" id="catEditingHint" style="display:none;"></div>
+        <details class="advanced-coords" style="margin-top:14px;">
+          <summary>分類篩選按鈕顏色設定</summary>
+          <p class="backup-hint" style="margin:8px 0;">控制前台「依分類篩選」按鈕的樣子（不是單一分類的顏色，那個在上面每個分類自己設定）。</p>
+          <p class="theme-group-title" style="margin-top:4px;">預設狀態</p>
+          <div class="theme-color-row"><div class="theme-color-label">背景</div><input type="color" class="theme-color-swatch" id="f_theme_cat_bg" onchange="onThemeColorChange('catBg', this.value)" /></div>
+          <div class="theme-color-row"><div class="theme-color-label">文字</div><input type="color" class="theme-color-swatch" id="f_theme_cat_text" onchange="onThemeColorChange('catText', this.value)" /></div>
+          <div class="theme-color-row"><div class="theme-color-label">框線</div><input type="color" class="theme-color-swatch" id="f_theme_cat_border" onchange="onThemeColorChange('catBorder', this.value)" /></div>
+          <p class="theme-group-title">滑鼠移過去</p>
+          <div class="theme-color-row"><div class="theme-color-label">背景</div><input type="color" class="theme-color-swatch" id="f_theme_cat_hover_bg" onchange="onThemeColorChange('catHoverBg', this.value)" /></div>
+          <div class="theme-color-row"><div class="theme-color-label">框線</div><input type="color" class="theme-color-swatch" id="f_theme_cat_hover_border" onchange="onThemeColorChange('catHoverBorder', this.value)" /></div>
+          <p class="theme-group-title">選取中</p>
+          <div class="theme-color-row"><div class="theme-color-label">背景</div><input type="color" class="theme-color-swatch" id="f_theme_cat_active_bg" onchange="onThemeColorChange('catActiveBg', this.value)" /></div>
+          <div class="theme-color-row"><div class="theme-color-label">框線</div><input type="color" class="theme-color-swatch" id="f_theme_cat_active_border" onchange="onThemeColorChange('catActiveBorder', this.value)" /></div>
+        </details>
       </div>
 
       <div class="admin-section" style="margin-top:20px;">
@@ -652,12 +686,44 @@ textarea{resize:vertical;min-height:70px;line-height:1.6;}
           </div>
         </form>
         <div class="cat-editing-hint" id="tagEditingHint" style="display:none;"></div>
+        <details class="advanced-coords" style="margin-top:14px;">
+          <summary>標籤按鈕顏色設定</summary>
+          <p class="backup-hint" style="margin:8px 0;">控制前台「依標籤篩選」按鈕，跟卡片上顯示的標籤小晶片。</p>
+          <div class="theme-color-row"><div class="theme-color-label">標籤列背景</div><input type="color" class="theme-color-swatch" id="f_theme_tagbar_bg" onchange="onThemeColorChange('tagBarBgColor', this.value)" /></div>
+          <p class="theme-group-title" style="margin-top:4px;">預設狀態</p>
+          <div class="theme-color-row"><div class="theme-color-label">背景</div><input type="color" class="theme-color-swatch" id="f_theme_tag_bg" onchange="onThemeColorChange('tagBg', this.value)" /></div>
+          <div class="theme-color-row"><div class="theme-color-label">文字</div><input type="color" class="theme-color-swatch" id="f_theme_tag_text" onchange="onThemeColorChange('tagText', this.value)" /></div>
+          <div class="theme-color-row"><div class="theme-color-label">框線</div><input type="color" class="theme-color-swatch" id="f_theme_tag_border" onchange="onThemeColorChange('tagBorder', this.value)" /></div>
+          <p class="theme-group-title">滑鼠移過去</p>
+          <div class="theme-color-row"><div class="theme-color-label">背景</div><input type="color" class="theme-color-swatch" id="f_theme_tag_hover_bg" onchange="onThemeColorChange('tagHoverBg', this.value)" /></div>
+          <div class="theme-color-row"><div class="theme-color-label">框線</div><input type="color" class="theme-color-swatch" id="f_theme_tag_hover_border" onchange="onThemeColorChange('tagHoverBorder', this.value)" /></div>
+          <p class="theme-group-title">選取中</p>
+          <div class="theme-color-row"><div class="theme-color-label">背景</div><input type="color" class="theme-color-swatch" id="f_theme_tag_active_bg" onchange="onThemeColorChange('tagActiveBg', this.value)" /></div>
+          <div class="theme-color-row"><div class="theme-color-label">框線</div><input type="color" class="theme-color-swatch" id="f_theme_tag_active_border" onchange="onThemeColorChange('tagActiveBorder', this.value)" /></div>
+        </details>
       </div>
 
       <div class="admin-section" style="margin-top:20px;">
         <h3>圖標管理</h3>
         <p class="backup-hint" style="margin-bottom:10px;">可以搜尋、瀏覽全部圖標，直接修改每個圖標的名稱與所屬分類（地點/活動/食物/動物/自然/交通/形狀/其它）。</p>
         <button type="button" class="new-spot-btn" onclick="openIconManageModal()"><i class="fa-solid fa-icons"></i> 管理圖標</button>
+      </div>
+
+      <div class="admin-section" style="margin-top:20px;">
+        <h3>後台按鈕與其他顏色</h3>
+        <p class="backup-hint" style="margin-bottom:6px;">帳號設定、返回前台地圖、清空這類次要按鈕算「次要按鈕色」；登出算「警示色」；儲存／新增這類主要按鈕算「主要按鈕色」。</p>
+        <div class="theme-color-row"><div class="theme-color-label">主要按鈕色<span class="theme-color-sub">儲存、新增等</span></div><input type="color" class="theme-color-swatch" id="f_theme_btn_primary" onchange="onThemeColorChange('btnPrimary', this.value)" /></div>
+        <div class="theme-color-row"><div class="theme-color-label">次要按鈕色<span class="theme-color-sub">帳號設定、返回前台地圖、清空</span></div><input type="color" class="theme-color-swatch" id="f_theme_btn_secondary" onchange="onThemeColorChange('btnSecondary', this.value)" /></div>
+        <div class="theme-color-row"><div class="theme-color-label">警示按鈕色<span class="theme-color-sub">登出</span></div><input type="color" class="theme-color-swatch" id="f_theme_btn_danger" onchange="onThemeColorChange('btnDanger', this.value)" /></div>
+        <details class="advanced-coords" style="margin-top:12px;">
+          <summary>其他全域顏色</summary>
+          <div class="theme-color-row"><div class="theme-color-label">頁面背景<span class="theme-color-sub">後台整體背景</span></div><input type="color" class="theme-color-swatch" id="f_theme_bg" onchange="onThemeColorChange('bgColor', this.value)" /></div>
+          <div class="theme-color-row"><div class="theme-color-label">頁首背景</div><input type="color" class="theme-color-swatch" id="f_theme_header_bg" onchange="onThemeColorChange('headerBgColor', this.value)" /></div>
+          <div class="theme-color-row"><div class="theme-color-label">後台區塊背景</div><input type="color" class="theme-color-swatch" id="f_theme_admin_section_bg" onchange="onThemeColorChange('adminSectionBgColor', this.value)" /></div>
+          <div class="theme-color-row"><div class="theme-color-label">框線顏色<span class="theme-color-sub">通用框線</span></div><input type="color" class="theme-color-swatch" id="f_theme_border" onchange="onThemeColorChange('borderColor', this.value)" /></div>
+          <div class="theme-color-row"><div class="theme-color-label">內文文字顏色<span class="theme-color-sub">通用內文</span></div><input type="color" class="theme-color-swatch" id="f_theme_text" onchange="onThemeColorChange('textColor', this.value)" /></div>
+          <div class="theme-color-row"><div class="theme-color-label">次要文字顏色<span class="theme-color-sub">通用次要文字</span></div><input type="color" class="theme-color-swatch" id="f_theme_muted" onchange="onThemeColorChange('mutedTextColor', this.value)" /></div>
+        </details>
       </div>
 
       <div class="admin-section" style="margin-top:20px;">
@@ -675,6 +741,26 @@ textarea{resize:vertical;min-height:70px;line-height:1.6;}
     <div class="admin-section">
       <h3>現有景點列表 <span class="sub" id="adminCount"></span></h3>
       <p class="backup-hint" style="margin-bottom:10px;">拖曳 <i class="fa-solid fa-grip-vertical"></i> 可以調整景點順序，順序會同步影響前台列表。</p>
+      <details class="advanced-coords" style="margin-bottom:14px;">
+        <summary>景點卡片顏色設定</summary>
+        <p class="backup-hint" style="margin:8px 0;">控制前台景點卡片、地圖彈出視窗的樣子。</p>
+        <p class="theme-group-title" style="margin-top:4px;">一般卡片</p>
+        <div class="theme-color-row"><div class="theme-color-label">背景</div><input type="color" class="theme-color-swatch" id="f_theme_card_bg" onchange="onThemeColorChange('cardBgColor', this.value)" /></div>
+        <div class="theme-color-row"><div class="theme-color-label">景點名稱</div><input type="color" class="theme-color-swatch" id="f_theme_card_title" onchange="onThemeColorChange('cardTitleColor', this.value)" /></div>
+        <div class="theme-color-row"><div class="theme-color-label">介紹文字</div><input type="color" class="theme-color-swatch" id="f_theme_card_desc" onchange="onThemeColorChange('cardDescColor', this.value)" /></div>
+        <div class="theme-color-row"><div class="theme-color-label">框線</div><input type="color" class="theme-color-swatch" id="f_theme_card_border" onchange="onThemeColorChange('cardBorder', this.value)" /></div>
+        <div class="theme-color-row"><div class="theme-color-label">滑鼠移過去框線</div><input type="color" class="theme-color-swatch" id="f_theme_card_hover_border" onchange="onThemeColorChange('cardHoverBorder', this.value)" /></div>
+        <div class="theme-color-row"><div class="theme-color-label">選取中背景</div><input type="color" class="theme-color-swatch" id="f_theme_card_selected_bg" onchange="onThemeColorChange('cardSelectedBg', this.value)" /></div>
+        <div class="theme-color-row"><div class="theme-color-label">選取中框線</div><input type="color" class="theme-color-swatch" id="f_theme_card_selected_border" onchange="onThemeColorChange('cardSelectedBorder', this.value)" /></div>
+        <p class="theme-group-title">特別推薦卡片（漸層）</p>
+        <div class="theme-color-row"><div class="theme-color-label">背景<span class="theme-color-sub">漸層起始色</span></div><input type="color" class="theme-color-swatch" id="f_theme_rec_bg_start" onchange="onThemeColorChange('recBgStart', this.value)" /></div>
+        <div class="theme-color-row"><div class="theme-color-label">強調背景<span class="theme-color-sub">漸層結束色</span></div><input type="color" class="theme-color-swatch" id="f_theme_rec_bg_end" onchange="onThemeColorChange('recBgEnd', this.value)" /></div>
+        <div class="theme-color-row"><div class="theme-color-label">框線</div><input type="color" class="theme-color-swatch" id="f_theme_rec_border" onchange="onThemeColorChange('recBorder', this.value)" /></div>
+        <div class="theme-color-row"><div class="theme-color-label">強調框線<span class="theme-color-sub">滑鼠移過去／選取中</span></div><input type="color" class="theme-color-swatch" id="f_theme_rec_selected_border" onchange="onThemeColorChange('recSelectedBorder', this.value)" /></div>
+        <p class="theme-group-title">其他</p>
+        <div class="theme-color-row"><div class="theme-color-label">Google 地圖按鈕</div><input type="color" class="theme-color-swatch" id="f_theme_navbtn" onchange="onThemeColorChange('navBtnColor', this.value)" /></div>
+        <div class="theme-color-row"><div class="theme-color-label">側邊欄背景</div><input type="color" class="theme-color-swatch" id="f_theme_sidebar_bg" onchange="onThemeColorChange('sidebarBgColor', this.value)" /></div>
+      </details>
       <div class="form-row two-col" style="margin-bottom:8px;">
         <div>
           <label style="font-size:11px;">依分類篩選</label>
@@ -1805,14 +1891,61 @@ function renderSiteMeta(){
   document.title = siteMeta.subtitle ? `${siteMeta.title}・${siteMeta.subtitle}` : siteMeta.title;
 }
 
-/* ---- 外觀顏色設定：標題色／強調色／背景色，可在後台自訂並同步 ---- */
+/* ---- 外觀顏色設定：文字色／強調色／框線／多個背景區塊，可在後台自訂並同步 ---- */
 const THEME_KEY = 'yilan_guesthouse_theme_v1';
 const DEFAULT_THEME = {
-  titleColor: '#1A1A1A',
-  subtitleColor: '#6B6858',
-  accentColor: '#1A1A1A',
-  bgColor: '#FAF6EE',
-  cardBgColor: '#FFFDF8'
+  titleColor: '#1A1A1A', subtitleColor: '#6B6858',
+  textColor: '#2B2A25', mutedTextColor: '#6B6858', borderColor: '#E3DBC6',
+  bgColor: '#FAF6EE', headerBgColor: '#FAF6EE', adminSectionBgColor: '#FFFDF8',
+  catBg: '#FFFDF8', catText: '#6B6858', catBorder: '#E3DBC6',
+  catHoverBg: '#FFFDF8', catHoverBorder: '#6B8E5A',
+  catActiveBg: '#1A1A1A', catActiveBorder: '#1A1A1A',
+  tagBg: '#FFFDF8', tagText: '#6B6858', tagBorder: '#E3DBC6',
+  tagHoverBg: '#FFFDF8', tagHoverBorder: '#6B8E5A',
+  tagActiveBg: '#1A1A1A', tagActiveBorder: '#1A1A1A',
+  tagBarBgColor: '#F1EBDC',
+  cardBgColor: '#FFFDF8', cardTitleColor: '#2B2A25', cardDescColor: '#6B6858',
+  cardBorder: '#E3DBC6', cardHoverBorder: '#3E5238',
+  cardSelectedBg: '#F1EBDC', cardSelectedBorder: '#3E5238',
+  recBgStart: '#FBF2DA', recBgEnd: '#FFFDF8', recBorder: '#E3C578', recSelectedBorder: '#C9A227',
+  navBtnColor: '#1A1A1A', sidebarBgColor: '#FAF6EE',
+  btnPrimary: '#1A1A1A', btnSecondary: '#6B6858', btnDanger: '#B23A2E'
+};
+const THEME_FIELD_TO_VAR = {
+  titleColor: '--theme-title-color', subtitleColor: '--theme-subtitle-color',
+  textColor: '--theme-text-color', mutedTextColor: '--theme-muted-text-color', borderColor: '--theme-border-color',
+  bgColor: '--theme-bg-color', headerBgColor: '--theme-header-bg-color', adminSectionBgColor: '--theme-admin-section-bg-color',
+  catBg: '--theme-cat-bg', catText: '--theme-cat-text', catBorder: '--theme-cat-border',
+  catHoverBg: '--theme-cat-hover-bg', catHoverBorder: '--theme-cat-hover-border',
+  catActiveBg: '--theme-cat-active-bg', catActiveBorder: '--theme-cat-active-border',
+  tagBg: '--theme-tag-bg', tagText: '--theme-tag-text', tagBorder: '--theme-tag-border',
+  tagHoverBg: '--theme-tag-hover-bg', tagHoverBorder: '--theme-tag-hover-border',
+  tagActiveBg: '--theme-tag-active-bg', tagActiveBorder: '--theme-tag-active-border',
+  tagBarBgColor: '--theme-tagbar-bg-color',
+  cardBgColor: '--theme-card-bg-color', cardTitleColor: '--theme-card-title-color', cardDescColor: '--theme-card-desc-color',
+  cardBorder: '--theme-card-border', cardHoverBorder: '--theme-card-hover-border',
+  cardSelectedBg: '--theme-card-selected-bg', cardSelectedBorder: '--theme-card-selected-border',
+  recBgStart: '--theme-rec-bg-start', recBgEnd: '--theme-rec-bg-end', recBorder: '--theme-rec-border', recSelectedBorder: '--theme-rec-selected-border',
+  navBtnColor: '--theme-navbtn-color', sidebarBgColor: '--theme-sidebar-bg-color',
+  btnPrimary: '--theme-btn-primary', btnSecondary: '--theme-btn-secondary', btnDanger: '--theme-btn-danger'
+};
+const THEME_FIELD_TO_INPUT_ID = {
+  titleColor: 'f_theme_title', subtitleColor: 'f_theme_subtitle',
+  textColor: 'f_theme_text', mutedTextColor: 'f_theme_muted', borderColor: 'f_theme_border',
+  bgColor: 'f_theme_bg', headerBgColor: 'f_theme_header_bg', adminSectionBgColor: 'f_theme_admin_section_bg',
+  catBg: 'f_theme_cat_bg', catText: 'f_theme_cat_text', catBorder: 'f_theme_cat_border',
+  catHoverBg: 'f_theme_cat_hover_bg', catHoverBorder: 'f_theme_cat_hover_border',
+  catActiveBg: 'f_theme_cat_active_bg', catActiveBorder: 'f_theme_cat_active_border',
+  tagBg: 'f_theme_tag_bg', tagText: 'f_theme_tag_text', tagBorder: 'f_theme_tag_border',
+  tagHoverBg: 'f_theme_tag_hover_bg', tagHoverBorder: 'f_theme_tag_hover_border',
+  tagActiveBg: 'f_theme_tag_active_bg', tagActiveBorder: 'f_theme_tag_active_border',
+  tagBarBgColor: 'f_theme_tagbar_bg',
+  cardBgColor: 'f_theme_card_bg', cardTitleColor: 'f_theme_card_title', cardDescColor: 'f_theme_card_desc',
+  cardBorder: 'f_theme_card_border', cardHoverBorder: 'f_theme_card_hover_border',
+  cardSelectedBg: 'f_theme_card_selected_bg', cardSelectedBorder: 'f_theme_card_selected_border',
+  recBgStart: 'f_theme_rec_bg_start', recBgEnd: 'f_theme_rec_bg_end', recBorder: 'f_theme_rec_border', recSelectedBorder: 'f_theme_rec_selected_border',
+  navBtnColor: 'f_theme_navbtn', sidebarBgColor: 'f_theme_sidebar_bg',
+  btnPrimary: 'f_theme_btn_primary', btnSecondary: 'f_theme_btn_secondary', btnDanger: 'f_theme_btn_danger'
 };
 function loadTheme(){
   try{
@@ -1825,18 +1958,15 @@ function loadTheme(){
 function saveTheme(t){ localStorage.setItem(THEME_KEY, JSON.stringify(t)); fbSet('theme', t); }
 function applyTheme(){
   const root = document.documentElement.style;
-  root.setProperty('--theme-title-color', theme.titleColor);
-  root.setProperty('--theme-subtitle-color', theme.subtitleColor);
-  root.setProperty('--theme-accent-color', theme.accentColor);
-  root.setProperty('--theme-bg-color', theme.bgColor);
-  root.setProperty('--theme-card-bg-color', theme.cardBgColor);
+  Object.keys(THEME_FIELD_TO_VAR).forEach(key => {
+    root.setProperty(THEME_FIELD_TO_VAR[key], theme[key] || DEFAULT_THEME[key]);
+  });
 }
 function renderThemeAdminInputs(){
-  document.getElementById('f_theme_title').value = theme.titleColor;
-  document.getElementById('f_theme_subtitle').value = theme.subtitleColor;
-  document.getElementById('f_theme_accent').value = theme.accentColor;
-  document.getElementById('f_theme_bg').value = theme.bgColor;
-  document.getElementById('f_theme_card_bg').value = theme.cardBgColor;
+  Object.keys(THEME_FIELD_TO_INPUT_ID).forEach(key => {
+    const el = document.getElementById(THEME_FIELD_TO_INPUT_ID[key]);
+    if(el) el.value = theme[key] || DEFAULT_THEME[key];
+  });
 }
 function onThemeColorChange(key, value){
   theme[key] = value;
@@ -1844,13 +1974,65 @@ function onThemeColorChange(key, value){
   saveTheme(theme);
   showToast('顏色已更新');
 }
-function resetTheme(){
-  if(!confirm('確定要把外觀顏色重設回預設值嗎？')) return;
-  theme = clone(DEFAULT_THEME);
+
+/* ---- 常用配色組合：把整組顏色存成一個預設，之後可以一鍵切換 ---- */
+const THEME_PRESETS_KEY = 'yilan_guesthouse_theme_presets_v1';
+function loadThemePresets(){
+  try{
+    const raw = localStorage.getItem(THEME_PRESETS_KEY);
+    return raw ? JSON.parse(raw) : [];
+  }catch(e){ return []; }
+}
+function saveThemePresets(arr){ localStorage.setItem(THEME_PRESETS_KEY, JSON.stringify(arr)); fbSet('themePresets', arr); }
+let themePresets = loadThemePresets();
+function renderThemePresetList(){
+  const container = document.getElementById('themePresetList');
+  if(!container) return;
+  if(themePresets.length === 0){
+    container.innerHTML = `<p style="font-size:12.5px;color:var(--ink-soft);">目前還沒有存過任何配色組合。</p>`;
+    return;
+  }
+  container.innerHTML = themePresets.map(p => {
+    const swatchKeys = ['titleColor','btnPrimary','catActiveBg','bgColor','cardBgColor'];
+    const swatches = swatchKeys.map(k => `<span style="display:inline-block;width:16px;height:16px;border-radius:50%;background:${p.theme[k] || '#ccc'};border:1px solid rgba(0,0,0,.1);margin-right:3px;"></span>`).join('');
+    return `
+      <div class="cat-admin-row">
+        <div style="display:flex;align-items:center;">${swatches}</div>
+        <div class="cname" style="flex:1;">${escapeHtml(p.name)}</div>
+        <button class="icon-btn" title="套用這組配色" onclick="applyThemePreset('${p.id}')"><i class="fa-solid fa-check"></i></button>
+        <button class="icon-btn danger" title="刪除" onclick="deleteThemePreset('${p.id}')"><i class="fa-solid fa-trash"></i></button>
+      </div>
+    `;
+  }).join('');
+}
+function saveCurrentThemeAsPreset(){
+  const nameInput = document.getElementById('f_theme_preset_name');
+  const name = nameInput.value.trim();
+  if(!name){ alert('請先幫這組配色取個名字。'); return; }
+  const id = 'themep_' + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+  themePresets.push({ id, name, theme: clone(theme) });
+  saveThemePresets(themePresets);
+  nameInput.value = '';
+  renderThemePresetList();
+  showToast('已儲存這組配色');
+}
+function applyThemePreset(id){
+  const preset = themePresets.find(p => p.id === id);
+  if(!preset) return;
+  theme = Object.assign({}, DEFAULT_THEME, preset.theme);
   applyTheme();
   saveTheme(theme);
   renderThemeAdminInputs();
-  showToast('已重設為預設顏色');
+  showToast(`已套用「${preset.name}」配色`);
+}
+function deleteThemePreset(id){
+  const preset = themePresets.find(p => p.id === id);
+  if(!preset) return;
+  if(!confirm(`確定要刪除「${preset.name}」這組配色嗎？`)) return;
+  themePresets = themePresets.filter(p => p.id !== id);
+  saveThemePresets(themePresets);
+  renderThemePresetList();
+  showToast('已刪除這組配色');
 }
 
 /* ---- 顏色工具：由分類色推導淡底色 / 深字色 ---- */
@@ -2337,10 +2519,12 @@ function openAdminOverlayInner(){
   tags = loadTags();
   siteMeta = loadSiteMeta();
   theme = loadTheme();
+  themePresets = loadThemePresets();
   selectedBulkIds.clear();
   document.getElementById('f_site_title').value = siteMeta.title;
   document.getElementById('f_site_subtitle').value = siteMeta.subtitle || '';
   renderThemeAdminInputs();
+  renderThemePresetList();
   populateCategorySelect();
   populateAdminListFilterSelect();
   populateAdminListTagFilterSelect();
@@ -3573,11 +3757,11 @@ renderAll();
 /* 開啟頁面時，背景向 Firebase 抓最新資料；抓到就整批更新畫面＋覆蓋本機快取，
    讓電腦／手機開到的是同一份最新內容。抓不到（離線、雲端服務異常）就靜靜維持用本機快取，不影響網站正常使用 */
 async function syncFromFirebase(){
-  const [fbSpotsRaw, fbCategoriesRaw, fbTagsRaw, fbSiteMeta, fbIconLibraryRaw, fbIconGroupsRaw, fbAuth, fbTheme] = await Promise.all([
-    fbGet('spots'), fbGet('categories'), fbGet('tags'), fbGet('siteMeta'), fbGet('iconLibrary'), fbGet('iconGroups'), fbGet('auth'), fbGet('theme')
+  const [fbSpotsRaw, fbCategoriesRaw, fbTagsRaw, fbSiteMeta, fbIconLibraryRaw, fbIconGroupsRaw, fbAuth, fbTheme, fbThemePresetsRaw] = await Promise.all([
+    fbGet('spots'), fbGet('categories'), fbGet('tags'), fbGet('siteMeta'), fbGet('iconLibrary'), fbGet('iconGroups'), fbGet('auth'), fbGet('theme'), fbGet('themePresets')
   ]);
 
-  const allEmpty = [fbSpotsRaw, fbCategoriesRaw, fbTagsRaw, fbSiteMeta, fbIconLibraryRaw, fbIconGroupsRaw, fbAuth, fbTheme].every(v => v === undefined || v === null);
+  const allEmpty = [fbSpotsRaw, fbCategoriesRaw, fbTagsRaw, fbSiteMeta, fbIconLibraryRaw, fbIconGroupsRaw, fbAuth, fbTheme, fbThemePresetsRaw].every(v => v === undefined || v === null);
   if(allEmpty){
     // 雲端資料庫是空的（第一次串接），把目前這台裝置的資料當作雲端的起始版本上傳上去
     fbSet('spots', spots);
@@ -3587,6 +3771,7 @@ async function syncFromFirebase(){
     fbSet('iconLibrary', iconLibrary);
     fbSet('iconGroups', iconGroups);
     fbSet('theme', theme);
+    fbSet('themePresets', themePresets);
     const authRaw = localStorage.getItem(AUTH_KEY);
     if(authRaw){ fbSet('auth', JSON.parse(authRaw)); }
     return;
@@ -3597,6 +3782,7 @@ async function syncFromFirebase(){
   const fbTags = toArrayLoose(fbTagsRaw);
   const fbIconLibrary = toArrayLoose(fbIconLibraryRaw);
   const fbIconGroups = toArrayLoose(fbIconGroupsRaw);
+  const fbThemePresets = toArrayLoose(fbThemePresetsRaw);
 
   let changed = false;
   if(fbSpots){ spots = fbSpots; localStorage.setItem(SPOTS_KEY, JSON.stringify(spots)); changed = true; }
@@ -3607,6 +3793,7 @@ async function syncFromFirebase(){
   if(fbIconGroups && fbIconGroups.length){ iconGroups = fbIconGroups; localStorage.setItem(ICON_GROUPS_KEY, JSON.stringify(iconGroups)); changed = true; }
   if(fbAuth && typeof fbAuth === 'object'){ localStorage.setItem(AUTH_KEY, JSON.stringify(fbAuth)); }
   if(fbTheme && typeof fbTheme === 'object'){ theme = Object.assign({}, DEFAULT_THEME, fbTheme); localStorage.setItem(THEME_KEY, JSON.stringify(theme)); applyTheme(); changed = true; }
+  if(fbThemePresets){ themePresets = fbThemePresets; localStorage.setItem(THEME_PRESETS_KEY, JSON.stringify(themePresets)); changed = true; }
 
   if(changed){
     renderSiteMeta();
@@ -3622,6 +3809,7 @@ async function syncFromFirebase(){
       renderTagAdmin();
       renderAdminList();
       renderThemeAdminInputs();
+      renderThemePresetList();
     }
   }
 }
