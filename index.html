@@ -5,9 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
 <title>宜蘭慢生活地圖・民宿主人的口袋名單</title>
 
+<!-- 相容性修補：預覽/沙箱環境若禁用瀏覽器儲存空間或擋掉地圖 CDN，避免整頁空白 -->
+<script>
+(function(){function M(){var d={};return{getItem:function(k){k=String(k);return Object.prototype.hasOwnProperty.call(d,k)?d[k]:null},setItem:function(k,v){d[String(k)]=String(v)},removeItem:function(k){delete d[String(k)]},clear:function(){d={}},key:function(i){var s=Object.keys(d);return i<s.length?s[i]:null},get length(){return Object.keys(d).length}}}
+function P(n){var ok=false;try{var s=window[n];if(s){s.setItem('__probe__','1');s.removeItem('__probe__');ok=true}}catch(e){ok=false}if(ok)return;var m=M();try{Object.defineProperty(window,n,{configurable:true,get:function(){return m}})}catch(e){try{window[n]=m}catch(e2){}}}
+P('localStorage');P('sessionStorage');})();
+</script>
+
 <!-- Leaflet 地圖套件 -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+
+<script>
+(function(){if(typeof window.L!=='undefined'&&window.L)return;var C=function(){return new Proxy(function(){},{get:function(t,p){if(p==='then'||p===Symbol.toPrimitive||p===Symbol.iterator||p==='nodeType')return undefined;return C()},apply:function(){return C()},construct:function(){return C()},set:function(){return true}})};window.L=C();window.__leafletMissing=true;
+document.addEventListener('DOMContentLoaded',function(){var el=document.getElementById('map');if(!el)return;el.innerHTML='<div style="height:100%;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;color:#7a6f63;line-height:1.9;font-size:14px;"><div><div style="font-size:28px;margin-bottom:10px;">&#127757;</div><strong>此環境無法載入地圖套件</strong><br>景點清單、分類與標籤篩選仍可正常使用。</div></div>'});})();
+</script>
 
 <!-- Font Awesome 圖示 -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
