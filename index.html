@@ -448,6 +448,51 @@ textarea{resize:vertical;min-height:70px;line-height:1.6;}
 }
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
+/* ---- 一鍵批次抓取車程 ---- */
+.dur-batch-btn{
+  width:100%;margin-bottom:10px;padding:10px;border:1.5px solid var(--sage);background:#E5EEE0;
+  border-radius:var(--radius-md);color:var(--sage-deep);font-weight:700;font-size:13px;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.dur-batch-btn:hover{background:#d9e6d1;}
+.dur-scope-opt{
+  display:flex;align-items:flex-start;gap:10px;padding:12px 13px;border:1px solid var(--line);
+  border-radius:10px;margin-bottom:9px;cursor:pointer;background:var(--paper);
+}
+.dur-scope-opt:hover{border-color:var(--sage);}
+.dur-scope-opt.chosen{border-color:var(--sage-deep);background:#E5EEE0;}
+.dur-scope-opt input{margin-top:3px;flex-shrink:0;}
+.dur-scope-opt .t{font-size:13.5px;font-weight:700;color:var(--ink);}
+.dur-scope-opt .d{font-size:11.5px;color:var(--ink-soft);line-height:1.7;margin-top:2px;}
+.dur-progress-track{height:9px;background:var(--paper-alt);border-radius:999px;overflow:hidden;margin:10px 0 8px;}
+.dur-progress-fill{height:100%;width:0%;background:var(--sage-deep);transition:width .2s ease;}
+.dur-log{
+  max-height:210px;overflow-y:auto;border:1px solid var(--line);border-radius:8px;
+  background:var(--paper);padding:8px 10px;font-size:12px;line-height:1.9;
+}
+.dur-log div{display:flex;gap:7px;align-items:baseline;}
+.dur-log .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.dur-log .vl{flex-shrink:0;font-weight:700;}
+.dur-log .ok{color:var(--sage-deep);}
+.dur-log .same{color:var(--ink-soft);}
+.dur-log .bad{color:var(--danger);}
+.dur-summary{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;}
+.dur-summary span{
+  font-size:12px;font-weight:700;padding:6px 11px;border-radius:999px;
+  background:var(--paper-alt);color:var(--ink-soft);
+}
+.dur-summary span.hl{background:#E5EEE0;color:var(--sage-deep);}
+.dur-summary span.warn{background:var(--danger-bg);color:var(--danger);}
+.dur-table{width:100%;border-collapse:collapse;font-size:12.5px;}
+.dur-table th{
+  text-align:left;font-size:11px;color:var(--ink-soft);font-weight:700;
+  padding:6px 8px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--paper-card);
+}
+.dur-table td{padding:7px 8px;border-bottom:1px solid var(--paper-alt);vertical-align:top;}
+.dur-table td.num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums;}
+.dur-table .up{color:#b5573b;font-weight:700;}
+.dur-table .down{color:var(--sage-deep);font-weight:700;}
+
 /* ======================= RWD：手機版 ======================= */
 @media (max-width: 860px){
   body{overflow-y:auto;height:auto;}
@@ -785,6 +830,7 @@ textarea{resize:vertical;min-height:70px;line-height:1.6;}
         <button type="button" class="topbar-btn logout" onclick="applyBulkDelete()"><i class="fa-solid fa-trash"></i> 刪除所選</button>
         <button type="button" class="cancel-btn" onclick="clearBulkSelection()">取消選取</button>
       </div>
+      <button type="button" class="dur-batch-btn" onclick="openDurBatch()"><i class="fa-solid fa-car-side"></i> 一鍵抓取車程</button>
       <div id="adminList"></div>
       <button class="new-spot-btn" onclick="newSpotForm()"><i class="fa-solid fa-plus"></i> 新增景點</button>
     </div>
@@ -889,6 +935,64 @@ textarea{resize:vertical;min-height:70px;line-height:1.6;}
           <button type="button" class="cancel-btn" onclick="closeSpotModal()">取消</button>
         </div>
     </form>
+    </div>
+  </div>
+</div>
+
+<!-- ======================= 一鍵批次抓取車程 ======================= -->
+<div id="durBatchOverlay" class="center-overlay">
+  <div class="auth-card spot-modal-card" style="width:640px;">
+    <button class="auth-close-x" onclick="closeDurBatch()"><i class="fa-solid fa-xmark"></i></button>
+    <h2><i class="fa-solid fa-car-side"></i> 一鍵抓取車程</h2>
+    <p class="sub" id="durBatchSub">從「鬧鐘關掉」民宿出發，自動查詢每個景點的開車時間</p>
+    <div class="modal-scroll-body">
+
+      <!-- 步驟一：選範圍 -->
+      <div id="durStepSetup">
+        <div id="durScopeList"></div>
+        <p class="backup-hint" style="margin-top:4px;">
+          資料來源是 OSRM 開源路網，免費但不含即時路況，數字會跟 Google 地圖略有出入，僅供客人參考。
+          為了不造成對方伺服器負擔，會一筆一筆慢慢查，過程中可以隨時停止。
+          <b>查完會先給你一張新舊對照表，你按確認之後才會真的存檔。</b>
+        </p>
+        <div class="form-actions">
+          <button type="button" class="cancel-btn" onclick="closeDurBatch()">取消</button>
+          <button type="button" class="save-btn" id="durStartBtn" onclick="startDurBatch()">
+            <i class="fa-solid fa-play"></i> 開始抓取
+          </button>
+        </div>
+      </div>
+
+      <!-- 步驟二：跑進度 -->
+      <div id="durStepRunning" style="display:none;">
+        <div class="dur-progress-track"><div class="dur-progress-fill" id="durProgressFill"></div></div>
+        <p style="font-size:12.5px;color:var(--ink-soft);margin:0 0 10px;" id="durProgressText"></p>
+        <div class="dur-log" id="durLog"></div>
+        <div class="form-actions">
+          <button type="button" class="cancel-btn" onclick="stopDurBatch()">
+            <i class="fa-solid fa-stop"></i> 停止
+          </button>
+        </div>
+      </div>
+
+      <!-- 步驟三：對照表確認 -->
+      <div id="durStepResult" style="display:none;">
+        <div class="dur-summary" id="durSummary"></div>
+        <div style="max-height:300px;overflow-y:auto;border:1px solid var(--line);border-radius:8px;">
+          <table class="dur-table">
+            <thead><tr><th>景點</th><th style="text-align:right;">原本</th><th style="text-align:right;">查到</th><th style="text-align:right;">差異</th></tr></thead>
+            <tbody id="durResultBody"></tbody>
+          </table>
+        </div>
+        <p class="backup-hint" id="durFailHint" style="display:none;"></p>
+        <div class="form-actions">
+          <button type="button" class="cancel-btn" onclick="closeDurBatch()">放棄，不要儲存</button>
+          <button type="button" class="save-btn" id="durApplyBtn" onclick="applyDurBatch()">
+            <i class="fa-solid fa-floppy-disk"></i> 確認並儲存
+          </button>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
@@ -3737,6 +3841,217 @@ function importData(event){
 
 /* Toast 小提示 */
 let toastTimer = null;
+/* =====================================================================
+   一鍵批次抓取車程
+   從民宿座標出發，用 OSRM 開源路網逐筆查詢每個景點的開車時間。
+   設計原則：
+   1. 一筆一筆慢慢查（每筆之間留間隔），不對公開的示範伺服器造成負擔
+   2. 查詢失敗會自動重試，仍失敗就標記起來，絕不用亂數或估算值蓋掉原本的資料
+   3. 全部查完先顯示新舊對照表，使用者按下「確認並儲存」才會真的寫入
+===================================================================== */
+const DUR_BATCH_GAP_MS = 300;      // 每筆查詢之間的間隔，禮貌性限速
+const DUR_BATCH_RETRIES = 2;       // 單筆失敗後的重試次數
+const DUR_BATCH_BACKOFF = [800, 2000];
+let durBatchScope = 'empty';       // 'all' | 'empty' | 'selected'
+let durBatchRunning = false;
+let durBatchAbort = false;
+let durBatchResults = [];          // [{id, title, before, after, status}]
+
+function hasValidCoords(spot){
+  return typeof spot.lat === 'number' && typeof spot.lng === 'number'
+    && !isNaN(spot.lat) && !isNaN(spot.lng);
+}
+function hasDuration(spot){
+  return typeof spot.durationMinutes === 'number' && !isNaN(spot.durationMinutes);
+}
+function durScopeSpots(scope){
+  if(scope === 'selected') return spots.filter(s => selectedBulkIds.has(s.id));
+  if(scope === 'empty') return spots.filter(s => !hasDuration(s));
+  return spots.slice();
+}
+
+function openDurBatch(){
+  durBatchRunning = false;
+  durBatchAbort = false;
+  durBatchResults = [];
+  document.getElementById('durStepSetup').style.display = '';
+  document.getElementById('durStepRunning').style.display = 'none';
+  document.getElementById('durStepResult').style.display = 'none';
+  document.getElementById('durLog').innerHTML = '';
+  document.getElementById('durProgressFill').style.width = '0%';
+  document.getElementById('durBatchSub').textContent = '從「鬧鐘關掉」民宿出發，自動查詢每個景點的開車時間';
+  renderDurScopeOptions();
+  document.getElementById('durBatchOverlay').classList.add('open');
+}
+function closeDurBatch(){
+  if(durBatchRunning){
+    if(!confirm('目前還在查詢中，確定要中斷並關閉嗎？已經查到的結果不會被儲存。')) return;
+    durBatchAbort = true;
+  }
+  document.getElementById('durBatchOverlay').classList.remove('open');
+}
+function renderDurScopeOptions(){
+  const selCount = durScopeSpots('selected').length;
+  const emptyCount = durScopeSpots('empty').length;
+  const allCount = spots.length;
+  const opts = [];
+  if(selCount > 0){
+    opts.push({ id:'selected', n:selCount, t:`只抓目前勾選的 ${selCount} 筆`,
+      d:'只處理你在下面列表中打勾的景點，其他景點完全不動。' });
+  }
+  opts.push({ id:'empty', n:emptyCount, t:`只補還沒有車程的景點（${emptyCount} 筆）`,
+    d:'已經填過數字的景點一律保留不動，只查空白的。最保守的做法。' });
+  opts.push({ id:'all', n:allCount, t:`全部重抓並覆蓋（${allCount} 筆）`,
+    d:'全部景點重新查一次，讓全站的車程標準一致。舊數字若有誤也會一併修正。' });
+
+  if(!opts.some(o => o.id === durBatchScope && o.n > 0)){
+    const firstUsable = opts.find(o => o.n > 0);
+    durBatchScope = firstUsable ? firstUsable.id : 'all';
+  }
+  document.getElementById('durScopeList').innerHTML = opts.map(o => `
+    <label class="dur-scope-opt ${durBatchScope === o.id ? 'chosen' : ''}" ${o.n === 0 ? 'style="opacity:.5;"' : ''}>
+      <input type="radio" name="durScope" value="${o.id}" ${durBatchScope === o.id ? 'checked' : ''}
+        ${o.n === 0 ? 'disabled' : ''} onchange="durBatchScope='${o.id}';renderDurScopeOptions();" />
+      <div><div class="t">${escapeHtml(o.t)}</div><div class="d">${escapeHtml(o.d)}</div></div>
+    </label>`).join('');
+  const startBtn = document.getElementById('durStartBtn');
+  const usable = durScopeSpots(durBatchScope).length;
+  startBtn.disabled = usable === 0;
+  startBtn.style.opacity = usable === 0 ? '.5' : '';
+}
+
+/* 查單一座標的車程，含逾時與重試；查不到就回 null，不做任何估算 */
+async function fetchDrivingMinutesFor(lat, lng){
+  for(let attempt = 0; attempt <= DUR_BATCH_RETRIES; attempt++){
+    if(durBatchAbort) return null;
+    const minutes = await fetchRealDrivingMinutes(lat, lng);
+    if(minutes !== null) return minutes;
+    if(attempt < DUR_BATCH_RETRIES){
+      await durSleep(DUR_BATCH_BACKOFF[attempt] || 2000);
+    }
+  }
+  return null;
+}
+function durSleep(ms){ return new Promise(r => setTimeout(r, ms)); }
+
+function durLogLine(title, cls, text){
+  const log = document.getElementById('durLog');
+  const row = document.createElement('div');
+  row.innerHTML = `<span class="nm">${escapeHtml(title)}</span><span class="vl ${cls}">${escapeHtml(text)}</span>`;
+  log.appendChild(row);
+  log.scrollTop = log.scrollHeight;
+}
+
+async function startDurBatch(){
+  const targets = durScopeSpots(durBatchScope);
+  if(targets.length === 0) return;
+  durBatchRunning = true;
+  durBatchAbort = false;
+  durBatchResults = [];
+  document.getElementById('durStepSetup').style.display = 'none';
+  document.getElementById('durStepRunning').style.display = '';
+  document.getElementById('durBatchSub').textContent = '查詢中，請不要關掉這個視窗';
+
+  const fill = document.getElementById('durProgressFill');
+  const text = document.getElementById('durProgressText');
+
+  for(let i = 0; i < targets.length; i++){
+    if(durBatchAbort) break;
+    const spot = targets[i];
+    text.textContent = `正在查第 ${i + 1} / ${targets.length} 筆：${spot.title}`;
+
+    if(!hasValidCoords(spot)){
+      durBatchResults.push({ id:spot.id, title:spot.title, before:spot.durationMinutes, after:null, status:'nocoord' });
+      durLogLine(spot.title, 'bad', '沒有座標，跳過');
+    }else{
+      const minutes = await fetchDrivingMinutesFor(spot.lat, spot.lng);
+      if(durBatchAbort) break;
+      if(minutes === null){
+        durBatchResults.push({ id:spot.id, title:spot.title, before:spot.durationMinutes, after:null, status:'fail' });
+        durLogLine(spot.title, 'bad', '查詢失敗');
+      }else{
+        const before = hasDuration(spot) ? spot.durationMinutes : null;
+        const same = before === minutes;
+        durBatchResults.push({ id:spot.id, title:spot.title, before:before, after:minutes, status: same ? 'same' : 'changed' });
+        durLogLine(spot.title, same ? 'same' : 'ok', same ? `${minutes} 分鐘（不變）` : `${before === null ? '—' : before} → ${minutes} 分鐘`);
+      }
+    }
+    fill.style.width = Math.round((i + 1) / targets.length * 100) + '%';
+    if(i < targets.length - 1) await durSleep(DUR_BATCH_GAP_MS);
+  }
+
+  durBatchRunning = false;
+  showDurResult(targets.length);
+}
+function stopDurBatch(){
+  if(!durBatchRunning) return;
+  durBatchAbort = true;
+  document.getElementById('durProgressText').textContent = '正在停止…';
+}
+
+function showDurResult(plannedCount){
+  const changed = durBatchResults.filter(r => r.status === 'changed');
+  const same = durBatchResults.filter(r => r.status === 'same');
+  const failed = durBatchResults.filter(r => r.status === 'fail' || r.status === 'nocoord');
+  document.getElementById('durStepRunning').style.display = 'none';
+  document.getElementById('durStepResult').style.display = '';
+  document.getElementById('durBatchSub').textContent = durBatchAbort
+    ? `已停止，這是已經查到的 ${durBatchResults.length} 筆結果`
+    : '查詢完成，請確認以下變更';
+
+  const parts = [`<span class="hl">${changed.length} 筆有變動</span>`, `<span>${same.length} 筆維持原樣</span>`];
+  if(failed.length) parts.push(`<span class="warn">${failed.length} 筆查不到</span>`);
+  if(durBatchAbort && durBatchResults.length < plannedCount){
+    parts.push(`<span>已停止，還有 ${plannedCount - durBatchResults.length} 筆沒查</span>`);
+  }
+  document.getElementById('durSummary').innerHTML = parts.join('');
+
+  const body = document.getElementById('durResultBody');
+  if(changed.length === 0){
+    body.innerHTML = `<tr><td colspan="4" style="color:var(--ink-soft);padding:16px 8px;">沒有任何景點的車程需要更新。</td></tr>`;
+  }else{
+    body.innerHTML = changed.map(r => {
+      const diff = r.before === null ? null : r.after - r.before;
+      const diffHtml = diff === null ? '<span style="color:var(--ink-soft);">新增</span>'
+        : `<span class="${diff > 0 ? 'up' : 'down'}">${diff > 0 ? '+' : ''}${diff}</span>`;
+      return `<tr>
+        <td>${escapeHtml(r.title)}</td>
+        <td class="num">${r.before === null ? '—' : r.before + ' 分'}</td>
+        <td class="num"><b>${r.after} 分</b></td>
+        <td class="num">${diffHtml}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  const hint = document.getElementById('durFailHint');
+  if(failed.length){
+    hint.style.display = '';
+    hint.innerHTML = `查不到的景點：${escapeHtml(failed.map(r => r.title).join('、'))}。`
+      + `這些景點的原本數字會<b>保持不變</b>，不會被亂填。可能是缺少座標、或路網服務暫時忙碌，稍後再試一次即可。`;
+  }else{
+    hint.style.display = 'none';
+  }
+
+  const applyBtn = document.getElementById('durApplyBtn');
+  applyBtn.disabled = changed.length === 0;
+  applyBtn.style.opacity = changed.length === 0 ? '.5' : '';
+}
+
+function applyDurBatch(){
+  const changed = durBatchResults.filter(r => r.status === 'changed');
+  if(changed.length === 0) return;
+  const map = new Map(changed.map(r => [r.id, r.after]));
+  let applied = 0;
+  spots.forEach(s => {
+    if(map.has(s.id)){ s.durationMinutes = map.get(s.id); applied++; }
+  });
+  saveSpots(spots);
+  renderAdminList();
+  renderAll();
+  document.getElementById('durBatchOverlay').classList.remove('open');
+  showToast(`已更新 ${applied} 個景點的車程`);
+}
+
 function showToast(msg){
   const el = document.getElementById('toast');
   el.innerHTML = `<i class="fa-solid fa-circle-check"></i> ${escapeHtml(msg)}`;
