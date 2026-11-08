@@ -2176,8 +2176,8 @@ let dragSpotId = null;
    地圖初始化：CartoDB Positron 淡雅底圖，聚焦宜蘭
 ===================================================================== */
 const map = L.map('map', { zoomControl: true }).setView([24.75, 121.75], 11);
-   L.tileLayer('https://eyJhbGciOiJIUzI1NiJ9.eyJhIjoiYWNfYWU3MTY5cGMiLCJqdGkiOiIxMzY3YmZiNDQ0MmIwNGIwNzg0OWYxZTlmN2M5ZjM0ZiJ9.HrQrwPBtxRGTjUOO_o26DUv7Vimn99KC-3UgNWXCzDM.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://stadiamaps.com/">Stadia Maps</a>',
+     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
   maxZoom: 19
 }).addTo(map);
 const markersLayer = L.layerGroup().addTo(map);
